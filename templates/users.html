@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #1f1f1f;
+            padding: 20px;
+            text-align: center;
+            color: #f0f0f0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        #main-container {
+            flex: 1;
+            width: 95%; 
+            max-width: 1600px; 
+            margin: 40px auto; 
+            background-color: #1e1e1e;
+            padding: 40px; 
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+            animation: fadeIn 1s ease-in-out;
+            display: flex;
+            justify-content: center; 
+            align-items: center;  
+            flex-direction: column; 
+            align-items: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        table {
+            width: 90%; 
+            max-width: 1200px; 
+            border-collapse: collapse;
+            background-color: #2a2a2a;
+            color: #e0e0e0;
+            margin:  auto; 
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #444;
+            cursor: pointer;
+        }
+
+        th {
+            background-color: #333;
+        }
+
+        tr:hover {
+            background-color: #3a3a3a;
+            transition: background-color 0.3s ease;
+        }
+
+        tr:nth-child(even) {
+            background-color: #2d2d2d;
+        }
+
+        #search-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        #searchInput {
+            width: 80%;
+            max-width: 500px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px 0 0 8px;
+            font-size: 16px;
+            background-color: #333;
+            color: #e0e0e0;
+            border-right: none;
+            outline: none;
+        }
+
+        #searchButton {
+            padding: 12px 20px;
+            background-color: #4caf50;
+            border: none;
+            border-radius: 0 8px 8px 0;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        #searchButton:hover {
+            background-color: #45a049;
+        }
+
+        footer {
+            background-color: #1f1f1f;
+            color: #e0e0e0;
+            text-align: center;
+            padding: 15px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        #sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100%;
+            background-color: #1e1e1e;
+            padding: 20px;
+            box-shadow: -4px 0 10px rgba(0, 0, 0, 0.5);
+            color: #e0e0e0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            display: none; 
+        }
+
+        .minimalist-button {
+            background: none; 
+            color: #b6aeae; 
+            border: 2px solid #4caf50; 
+            border-radius: 5px; 
+            padding: 10px 15px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            transition: cubic-bezier(0.165, 0.84, 0.44, 1)  0.3s, color 0.3s; 
+            display: flex; 
+            align-items: center; 
+        }
+
+        .minimalist-button i {
+            margin-right: 8px; 
+        }
+
+        .minimalist-button:hover {
+            background-color: #f0f0f0; 
+            color: #4caf50; 
+        }
+
+        .minimalist-button:focus {
+            outline: none; 
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); 
+        }
+
+
+        
+    </style>
+    <script>
+        let userDisplayName = '';
+        let userOfficeLocation = '';
+        let userMail = '';
+        let generatedImageUrl = '';
+
+        function showUserDetails(user) {
+            userDisplayName = user.displayName;
+            userOfficeLocation = user.officeLocation;
+            userMail = user.mail;
+
+            const userDetails = document.getElementById('userDetails');
+            userDetails.innerHTML = `
+                <p><strong>ID:</strong> ${user.id}</p>
+                <p><strong>Name:</strong> ${user.displayName}</p>
+                <p><strong>Email:</strong> ${user.mail}</p>
+                <p><strong>Department:</strong> ${user.department}</p>
+                <p><strong>Job Title:</strong> ${user.jobTitle}</p>
+                <p><strong>Office:</strong> ${user.officeLocation}</p>
+                <p><strong>Surname:</strong> ${user.surname}</p>
+            `;
+            
+            const sidebar = document.getElementById('sidebar');
+            sidebar.style.display = 'block'; 
+        }
+
+        function generateEmailSignature() {
+            const messageDiv = document.getElementById('completionMessage');
+            messageDiv.style.display = 'block'; 
+
+            
+            setTimeout(() => {
+                messageDiv.style.display = 'none'; 
+            }, 3000);
+        }
+
+        function sendEmail() {
+            alert('Email enviado!');
+        }
+        
+        async function loadUsers() {
+            const response = await fetch('/api/users');
+            if (!response.ok) {
+                alert('Failed to load users');
+                return;
+            }
+            const users = await response.json();
+            updateTable(users);
+        }
+
+        function updateTable(users) {
+            const tableBody = document.getElementById('userTableBody');
+            tableBody.innerHTML = '';
+
+            users.forEach(user => {
+                const row = `<tr onclick='showUserDetails(${JSON.stringify(user)})'>
+                    <td>${user.id}</td>
+                    <td>${user.displayName}</td>
+                    <td>${user.mail}</td>
+                    <td>${user.department}</td>
+                    <td>${user.jobTitle}</td>
+                    <td>${user.officeLocation}</td>
+                    <td>${user.surname}</td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        function filterUsers() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#userTableBody tr');
+
+            rows.forEach(row => {
+                const name = row.cells[1].textContent.toLowerCase();
+                const department = row.cells[3].textContent.toLowerCase();
+                if (name.includes(searchInput) || department.includes(searchInput)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        async function generateImage(name, sector, email) {
+            console.log(`Gerando imagem para: ${name}, Setor: ${sector}, E-mail: ${email}`); 
+            const response = await fetch('/generate_image', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, sector, email })
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                const generatedImageUrl = result.imageUrl; 
+                console.log(`Imagem gerada com sucesso: ${generatedImageUrl}`); 
+             
+
+                downloadImage(name, sector, generatedImageUrl); 
+            } else {
+                alert('Failed to generate image');
+                console.error('Erro na geração da imagem:', response.status, response.statusText); 
+            }
+        }
+        function closeSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.style.display = 'none';
+            }
+        function downloadImage(displayName, officeLocation, imageUrl) {
+            const fileName = `${displayName}_${officeLocation}.png`; 
+            const link = document.createElement('a');
+            link.href = imageUrl; 
+            link.download = fileName; 
+
+            console.log(`Preparando para baixar: ${fileName}, URL: ${imageUrl}`); 
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        window.onload = loadUsers;
+    </script>
+</head>
+<body>
+    <header>
+        <h1>API Users AZURE</h1>
+        <a href="config" style="position: absolute; top: 20px; right: 20px; color: #f0f0f0; font-size: 24px;">
+            <i class="fas fa-cog"></i>
+        </a>
+    </header>
+    
+    <div id="main-container">
+        <div id="search-container">
+            <input type="text" id="searchInput" placeholder="Search by name or department" onkeyup="filterUsers()">
+            <button id="searchButton" onclick="filterUsers()"><i class="fas fa-search"></i></button>
+        </div>
+
+        <div id="sidebar">
+            <button id="closeSidebar" onclick="closeSidebar()" style="background: none; border: none; color: #e0e0e0; font-size: 20px; cursor: pointer;">&times;</button>
+            <div id="userDetails"></div>
+            <button id="generateImageButton" class="minimalist-button" onclick="generateImage(userDisplayName,userOfficeLocation,userMail)">Generate Email Signature</button>
+
+        
+        </div>
+
+        <div id="completionMessage" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #28a745; color: white; padding: 20px; border-radius: 8px; z-index: 1000;">
+            Assinatura de email gerada com sucesso!
+        </div>
+
+        
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Department</th>
+                    <th>Job Title</th>
+                    <th>Office</th>
+                    <th>Surname</th>
+                </tr>
+            </thead>
+            <tbody id="userTableBody">
+           
+            </tbody>
+        </table>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Company Name</p>
+    </footer>
+</body>
+</html>
